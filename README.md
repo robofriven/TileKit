@@ -1,376 +1,220 @@
-\# TileKit.Core
-
-
+# TileKit.Core
 
 A tiny, deterministic tile engine for grid-based sims.  
-
 Pure C# (`netstandard2.1`). No Unity dependencies.
 
+---
 
+## Namespaces
+
+- `TileKit.Core.Grid`
+- `TileKit.Core.Map`
+- `TileKit.Core.Occupancy`
+- `TileKit.Core.Path`
+- `TileKit.Core.RNG`
+- `TileKit.Core.Serialization`
 
 ---
 
+## TileKit.Core.Grid
 
-
-\## Namespaces
-
-\- `TileKit.Core.Grid`
-
-\- `TileKit.Core.Map`
-
-\- `TileKit.Core.Occupancy`
-
-\- `TileKit.Core.Path`
-
-\- `TileKit.Core.RNG`
-
-\- `TileKit.Core.Serialization`
-
-
-
----
-
-
-
-\## TileKit.Core.Grid
-
-
-
-\### `TilePos`
-
+### `TilePos`
 Immutable grid coordinate.
 
+**Fields**
+- `int X`
+- `int Y`
 
+**Operators**
+- `+`, `-` — add or subtract positions
 
-\*\*Fields\*\*
-
-\- `int X`, `int Y`
-
-
-
-\*\*Operators\*\*
-
-\- `+`, `-` → add or subtract positions
-
-
-
-\*\*Methods\*\*
-
-\- `bool Equals(TilePos other)`
-
-\- `override bool Equals(object obj)`
-
-\- `override int GetHashCode()`
-
-\- `override string ToString()` → `"(x,y)"`
-
-
+**Methods**
+- `bool Equals(TilePos other)`
+- `override bool Equals(object obj)`
+- `override int GetHashCode()`
+- `override string ToString()` → `"(x,y)"`
 
 ---
 
-
-
-\### `Dir`
-
+### `Dir`
 Common neighbor directions.
 
-
-
-\*\*Static Fields\*\*
-
-\- `TilePos N, S, E, W`
-
-\- `TilePos NE, NW, SE, SW`
-
-\- `TilePos\[] Cardinal` (N, S, E, W)
-
-\- `TilePos\[] Ordinal` (diagonals)
-
-
+**Static Fields**
+- `TilePos N, S, E, W`
+- `TilePos NE, NW, SE, SW`
+- `TilePos[] Cardinal` (N, S, E, W)
+- `TilePos[] Ordinal` (diagonals)
 
 ---
 
-
-
-\### `TileRect`
-
+### `TileRect`
 Axis-aligned rectangle over positions.
 
+**Fields**
+- `int X`
+- `int Y`
+- `int Width`
+- `int Height`
 
-
-\*\*Fields\*\*
-
-\- `int X, Y, Width, Height`
-
-
-
-\*\*Methods\*\*
-
-\- `IEnumerable<TilePos> Positions()`
-
-
+**Methods**
+- `IEnumerable<TilePos> Positions()`
 
 ---
 
+## TileKit.Core.Map
 
-
-\## TileKit.Core.Map
-
-
-
-\### `TileLayer`
-
+### `TileLayer`
 Dense 2D layer storing `byte` values.
 
+**Constructor**
+- `TileLayer(int width, int height, byte fill = 0)`
 
+**Fields**
+- `int Width`
+- `int Height`
 
-\*\*Constructor\*\*
-
-\- `TileLayer(int width, int height, byte fill = 0)`
-
-
-
-\*\*Fields\*\*
-
-\- `int Width`, `int Height`
-
-
-
-\*\*Methods\*\*
-
-\- `bool InBounds(TilePos p)`
-
-\- `byte Get(TilePos p)`
-
-\- `void Set(TilePos p, byte value)`
-
-
+**Methods**
+- `bool InBounds(TilePos p)`
+- `byte Get(TilePos p)`
+- `void Set(TilePos p, byte value)`
 
 ---
 
-
-
-\### `TileMap`
-
+### `TileMap`
 Container for terrain + named layers + movement cost.
 
+**Constructor**
+- `TileMap(int width, int height, byte terrainFill = 0)`
 
-
-\*\*Constructor\*\*
-
-\- `TileMap(int width, int height, byte terrainFill = 0)`
-
-
-
-\*\*Fields\*\*
-
-\- `int Width`, `int Height`
-
-\- `TileLayer Terrain`
-
-\- `Dictionary<string, TileLayer> Layers`
-
-\- `Func<TilePos, int> MovementCost`  
-
-&nbsp; Return positive int = movement cost; 0 = blocked.
-
-
+**Fields**
+- `int Width`
+- `int Height`
+- `TileLayer Terrain`
+- `Dictionary<string, TileLayer> Layers`
+- `Func<TilePos, int> MovementCost`  
+  Return positive int = movement cost; 0 = blocked.
 
 ---
 
+## TileKit.Core.Occupancy
 
-
-\## TileKit.Core.Occupancy
-
-
-
-\### `EntityId`
-
+### `EntityId`
 Stable integer ID for entities.
 
+**Fields**
+- `int Value`
 
-
-\*\*Fields\*\*
-
-\- `int Value`
-
-
-
-\*\*Methods\*\*
-
-\- `override string ToString()` → `"E{Value}"`
-
-\- Equality \& hashing implemented.
-
-
+**Methods**
+- `override string ToString()` → `"E{Value}"`
+- Equality and hashing implemented
 
 ---
 
-
-
-\### `OccupancyMap`
-
+### `OccupancyMap`
 Single-occupant-per-tile tracker.
 
-
-
-\*\*Methods\*\*
-
-\- `bool IsFree(TilePos p)`
-
-\- `bool TryPlace(EntityId id, TilePos p)`
-
-\- `bool TryMove(EntityId id, TilePos from, TilePos to)`
-
-\- `bool Remove(TilePos p)`
-
-\- `bool TryGet(TilePos p, out EntityId id)`
-
-\- `void Clear()`
-
-
+**Methods**
+- `bool IsFree(TilePos p)`
+- `bool TryPlace(EntityId id, TilePos p)`
+- `bool TryMove(EntityId id, TilePos from, TilePos to)`
+- `bool Remove(TilePos p)`
+- `bool TryGet(TilePos p, out EntityId id)`
+- `void Clear()`
 
 ---
 
+## TileKit.Core.Path
 
+### `Pathfinder`
+Deterministic A* pathfinding.
 
-\## TileKit.Core.Path
+**Constructor**
+- `Pathfinder(TileMap map, bool diagonals = false)`
 
+**Methods**
+- `bool TryFind(TilePos start, TilePos goal, Span<TilePos> buffer, out int len)`  
+  Writes path into `buffer`. Returns true if path exists.  
+  `len` = number of steps (including start & goal).
 
-
-\### `Pathfinder`
-
-Deterministic A\* pathfinding.
-
-
-
-\*\*Constructor\*\*
-
-\- `Pathfinder(TileMap map, bool diagonals = false)`
-
-
-
-\*\*Methods\*\*
-
-\- `bool TryFind(TilePos start, TilePos goal, Span<TilePos> buffer, out int len)`  
-
-&nbsp; Writes path into `buffer`. Returns true if path exists.  
-
-&nbsp; `len` = number of steps (including start \& goal).
-
-
-
-\*\*Notes\*\*
-
-\- Manhattan heuristic.
-
-\- Tiles with cost ≤ 0 are blocked.
-
-
+**Notes**
+- Manhattan heuristic
+- Tiles with cost ≤ 0 are blocked
 
 ---
 
-
-
-\### `PriorityQueue<T>` \*(internal utility)\*
-
+### `PriorityQueue<T>` *(internal utility)*
 Binary heap. Exposed but mostly for `Pathfinder`.
 
-
-
-\- `void Enqueue(T item, int priority)`
-
-\- `bool TryDequeue(out T item, out int priority)`
-
-\- `int Count { get; }`
-
-
+**Methods**
+- `void Enqueue(T item, int priority)`
+- `bool TryDequeue(out T item, out int priority)`
+- `int Count { get; }`
 
 ---
 
+## TileKit.Core.RNG
 
-
-\## TileKit.Core.RNG
-
-
-
-\### `Rng`
-
+### `Rng`
 Deterministic SplitMix64 RNG.
 
+**Constructor**
+- `Rng(ulong seed)`
 
-
-\*\*Constructor\*\*
-
-\- `Rng(ulong seed)`
-
-
-
-\*\*Methods\*\*
-
-\- `int NextInt(int minInclusive, int maxExclusive)`
-
-\- `TilePos RandomNeighbor(TilePos p, bool diagonals = false)`
-
-
+**Methods**
+- `int NextInt(int minInclusive, int maxExclusive)`
+- `TilePos RandomNeighbor(TilePos p, bool diagonals = false)`
 
 ---
 
+## TileKit.Core.Serialization
 
-
-\## TileKit.Core.Serialization
-
-
-
-\### `TileSerde`
-
+### `TileSerde`
 Binary save/load for `TileLayer`.
 
-
-
-\*\*Methods\*\*
-
-\- `byte\[] SaveLayer(TileLayer layer)`  
-
-&nbsp; Format: width, height, then raw bytes row-major.
-
-\- `TileLayer LoadLayer(ReadOnlySpan<byte> data)`
-
-
+**Methods**
+- `byte[] SaveLayer(TileLayer layer)`  
+  Format: width, height, then raw bytes row-major
+- `TileLayer LoadLayer(ReadOnlySpan<byte> data)`
 
 ---
 
+## Usage Examples
 
-
-\## Usage Examples
-
-
-
-\### Pathfinding
-
+### Pathfinding
 ```csharp
-
 var map = new TileMap(32, 20, terrainFill: 0);
-
 map.MovementCost = p => map.Terrain.Get(p) == 3 ? 0 : 1;
 
-
-
 var pf = new Pathfinder(map);
-
-Span<TilePos> buf = stackalloc TilePos\[128];
-
-
+Span<TilePos> buf = stackalloc TilePos[128];
 
 if (pf.TryFind(new TilePos(2,2), new TilePos(10,10), buf, out var len))
-
 {
-
-&nbsp;   for (int i = 0; i < len; i++)
-
-&nbsp;       Console.WriteLine(buf\[i]);
-
+    for (int i = 0; i < len; i++)
+        Console.WriteLine(buf[i]);
 }
+```
 
+### Occupancy
+```csharp
+var occ = new OccupancyMap();
+var id = new EntityId(42);
+var start = new TilePos(2,2);
+occ.TryPlace(id, start);
 
+occ.TryMove(id, start, new TilePos(3,2));
+```
 
+### Save / Load
+```csharp
+var bytes = TileSerde.SaveLayer(map.Terrain);
+var loaded = TileSerde.LoadLayer(bytes);
+```
+
+---
+
+## Design Notes
+- Costs are integers. Return 0 from `MovementCost` to block a tile.
+- A* uses Manhattan distance; deterministic across platforms.
+- `OccupancyMap` enforces single occupancy per tile.
+- Rendering is left to you; works headless or with Unity adapters.
