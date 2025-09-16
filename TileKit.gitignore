@@ -1,0 +1,26 @@
+# Build outputs
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userprefs
+*.suo
+*.tmp
+
+# IDE cruft
+.vscode/
+.idea/
+*.csproj.user
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
